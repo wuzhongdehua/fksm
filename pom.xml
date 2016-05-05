@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>fksm</groupId>
+    <artifactId>storm.fksm</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>storm</module>
+        <module>flume</module>
+        <module>common</module>
+        <module>log-simulation</module>
+    </modules>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        
+        <storm.version>1.0.0</storm.version>
+        <log4j.version>1.7.16</log4j.version>
+        <logback.version>1.1.7</logback.version>
+        <jedis.version>2.6.1</jedis.version>
+        <mysql.version>5.1.29</mysql.version>
+        <dbcp.version>1.4</dbcp.version>
+        <kafka.version>0.9.0.1</kafka.version>
+        <scala.version>2.10.4</scala.version>
+        <scala.main.version>2.10</scala.main.version>
+        <config.version>1.2.1</config.version>
+        <curator.version>1.3.3</curator.version>
+        <fastjson.version>1.2.9</fastjson.version>
+        <flume-ng.version>1.6.0</flume-ng.version>
+    </properties>
+
+
+</project>

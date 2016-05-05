@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 但修改了本文件时，可以60秒重新载入本xml文件 -->
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+
+	<!-- 配置log文件的目录 -->
+	<!-- value都配置成/data/logs/[具体业务名称] 例如下面-->
+	<property name="LOG_PATH" value="/var/log" />
+	<property name="LOG_CHARSET" value="UTF-8" />
+
+	<!-- console的appender -->
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level[%t]\(%file:%L\) %msg%n</Pattern>
+		</layout>
+	</appender>
+
+	<!-- root打到这里 -->
+	<appender name="edaijiaReportAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_PATH}/edaijia-dp-storm.log</file>
+		<append>true</append>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${LOG_PATH}/edaijia-report.conf.%d{yyyy-MM-dd}</fileNamePattern>
+			<!-- 只保留最近30天的 -->
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<!-- 日志文件格式 -->
+		<encoder>
+			<!-- 业务分析log格式，所有业务分析使用的格式，都是这个格式，一般对应的logger都是warn或者error -->
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level[%t]\(%file:%L\) %msg%n</pattern>
+			<charset>${LOG_CHARSET}</charset>
+		</encoder>
+	</appender>
+
+	<root level="INFO">
+		<appender-ref ref="INFO,DEBUG,ERROR" />
+		<appender-ref ref="edaijiaReportAppender" />
+	</root>
+</configuration>

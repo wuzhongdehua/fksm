@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_fksm" default="compile.module.fksm">
+  <dirname property="module.fksm.basedir" file="${ant.file.module_fksm}"/>
+  
+  <property name="module.jdk.home.fksm" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.fksm" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.fksm" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.fksm" value="-encoding UTF-8 -source 1.5 -target 1.5 ${compiler.args}"/>
+  
+  <property name="fksm.output.dir" value="${module.fksm.basedir}/target/classes"/>
+  <property name="fksm.testoutput.dir" value="${module.fksm.basedir}/target/test-classes"/>
+  
+  <path id="fksm.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="fksm.module.production.classpath">
+    <path refid="${module.jdk.classpath.fksm}"/>
+  </path>
+  
+  <path id="fksm.runtime.production.module.classpath">
+    <pathelement location="${fksm.output.dir}"/>
+  </path>
+  
+  <path id="fksm.module.classpath">
+    <path refid="${module.jdk.classpath.fksm}"/>
+    <pathelement location="${fksm.output.dir}"/>
+  </path>
+  
+  <path id="fksm.runtime.module.classpath">
+    <pathelement location="${fksm.testoutput.dir}"/>
+    <pathelement location="${fksm.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.fksm">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.fksm">
+    <patternset refid="excluded.from.module.fksm"/>
+  </patternset>
+  
+  <path id="fksm.module.sourcepath">
+    <dirset dir="${module.fksm.basedir}">
+      <include name="src/main/java"/>
+      <include name="src/main/resources"/>
+    </dirset>
+  </path>
+  
+  <path id="fksm.module.test.sourcepath">
+    <dirset dir="${module.fksm.basedir}">
+      <include name="src/test/java"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.fksm" depends="compile.module.fksm.production,compile.module.fksm.tests" description="Compile module fksm"/>
+  
+  <target name="compile.module.fksm.production" depends="register.custom.compilers" description="Compile module fksm; production classes">
+    <mkdir dir="${fksm.output.dir}"/>
+    <javac2 destdir="${fksm.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.fksm}/javac">
+      <compilerarg line="${compiler.args.fksm}"/>
+      <bootclasspath refid="fksm.module.bootclasspath"/>
+      <classpath refid="fksm.module.production.classpath"/>
+      <src refid="fksm.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.fksm"/>
+    </javac2>
+    
+    <copy todir="${fksm.output.dir}">
+      <fileset dir="${module.fksm.basedir}/src/main/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.fksm.basedir}/src/main/resources">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.fksm.tests" depends="register.custom.compilers,compile.module.fksm.production" description="compile module fksm; test classes" unless="skip.tests">
+    <mkdir dir="${fksm.testoutput.dir}"/>
+    <javac2 destdir="${fksm.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.fksm}/javac">
+      <compilerarg line="${compiler.args.fksm}"/>
+      <bootclasspath refid="fksm.module.bootclasspath"/>
+      <classpath refid="fksm.module.classpath"/>
+      <src refid="fksm.module.test.sourcepath"/>
+      <patternset refid="excluded.from.compilation.fksm"/>
+    </javac2>
+    
+    <copy todir="${fksm.testoutput.dir}">
+      <fileset dir="${module.fksm.basedir}/src/test/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="clean.module.fksm" description="cleanup module">
+    <delete dir="${fksm.output.dir}"/>
+    <delete dir="${fksm.testoutput.dir}"/>
+  </target>
+</project>
