@@ -1,0 +1,69 @@
+响应时间:
+{"request_id": 1908777, "service_id":177, "begin_time":1397142240685, "end_time":1397142241908, "total_cost":1223}
+
+请求参数:
+{"request_id": 1908777, "service_id":177, "request_param":{ ... }}
+
+响应参数:
+{"request_id": 1908777, "service_id":177, "response_code":100, "response_param":{ ... }}
+
+服务信息:
+{"request_id": 1908777,"service_id":177, "service_path":"com.bychjzh.monitor.UserInfoService.getUserInfoById", "server_ip":192.168.137.247}
+
+调用者信息:
+{"request_id": 1908777, "service_id":177, "caller_ip":10.137.222.13 }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+bin/flume-ng agent --conf conf -f conf/log-files-to-kafka.properties -n a1 -Dflume.root.logger=INFO,console
+
+bin/kafka-server-start.sh config/server.properties
+bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic logs --from-beginning
+bin/kafka-topics.sh --zookeeper localhost:2181 --create --topic logs --partitions 1 --replication-factor 1
+
+bin/storm nimbus >/dev/null 2>&1 &
+bin/storm supervisor>/dev/null 2>&1 &
+bin/storm ui >/dev/null 2>&1 &
+bin/storm logviewer > /dev/null 2>&1 &
+
+bin/storm jar /opt/apps/storm-1.0-SNAPSHOT-jar-with-dependencies.jar com.fksm.storm.topology.KafkaTopology log-sample
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+create table caller_info(service_id STRING,request_id STRING, time STRING, server_ip STRING, caller_ip STRING)
+partitioned by(ds STRING)
+row format delimited
+fields terminated by ':'
+stored as TEXTFILE;
+
+drop table caller_info;
+
+load data inpath 'hdfs://localhost:9000/storm/log_caller_info_hdfs-caller-bolt*'
+into table caller_info
+partition (ds='20160508');
+
+create table resp_param(service_id STRING,request_id STRING, time STRING, server_ip STRING, response_code STRING)
+partitioned by(ds STRING)
+row format delimited
+fields terminated by ':'
+stored as TEXTFILE;
+
+load data inpath 'hdfs://localhost:9000/storm/log_resp_param_hdfs-resp-param-bolt*'
+into table resp_param
+partition (ds='20160508');
+
+create table resp_time(service_id STRING,request_id STRING, time STRING, end_time STRING, server_ip STRING)
+partitioned by(ds STRING)
+row format delimited
+fields terminated by ':'
+stored as TEXTFILE;
+
+load data inpath 'hdfs://localhost:9000/storm/log_resp_time_hdfs-resp-time-bolt*'
+into table resp_time
+partition (ds='20160508');
+
+create table service_info(service_id STRING,request_id STRING, time STRING, server_ip STRING)
+partitioned by(ds STRING)
+row format delimited
+fields terminated by ':'
+stored as TEXTFILE;
+
+load data inpath 'hdfs://localhost:9000/storm/log_service_info_hdfs-service-info-bolt*'
+into table service_info
+partition (ds='20160508');

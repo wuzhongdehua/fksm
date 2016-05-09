@@ -88,11 +88,13 @@ public class ServerServiceWindowBolt extends BaseRedisWindowBolt {
                     }
             }
         }
+        List<Long> timeLine = null;
         //得到这个分组下这段时间的所有数据,这是就可以进行统计操作了。
         //获取锁
         InterProcessMutex lock = null;
         try{
             lock = new InterProcessMutex(curatorLockAcquire.getCuratorClient(), "/locks/redis_timeline");
+            timeLine = checkAndAppendTimeLine(time.get(0), time.get(time.size() - 1));
         } catch (Exception ex) {
             logger.error("get time lines lock error : {}", ex);
         } finally {
@@ -104,7 +106,6 @@ public class ServerServiceWindowBolt extends BaseRedisWindowBolt {
                 logger.warn("close bonus connection error : {}", ex);
             }
         }
-        List<Long> timeLine = checkAndAppendTimeLine(time.get(0), time.get(time.size() - 1));
         Long startTime = timeLine.get(0);
         logger.debug("get statics time lines , start : {}, end : {}", startTime);
         //保存访问量
